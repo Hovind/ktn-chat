@@ -31,14 +31,13 @@ class Client:
 
         # TODO: Our stuff
         receiver = MessageReceiver(self, self.connection)
-        receiver.start()
+
         # Read input from user
         while (True):
             print("Hei")
             input = raw_input('Skriv noe: ')
             input = input.split(' ', 1)
-            if len(input) ==1:
-
+            if len(input) == 1:
                 payload = {'request': input[0], 'content': None}
             else:
                 payload = {'request': input[0], 'content': input[1]}
@@ -50,11 +49,13 @@ class Client:
 
     def receive_message(self, message):
         # TODO: Handle incoming message
-        parser = MessageParser(message)
+        parser = MessageParser()
+        parser.parse(message)
 
     def send_payload(self, data):
         # TODO: Handle sending of a payload
         payload_string = json.dumps(data)
+        print "Sending ", payload_string
         self.connection.send(payload_string)
         
     # More methods may be needed

@@ -21,7 +21,7 @@ class MessageReceiver(Thread):
         # TODO: Finish initialization of MessageReceiver
         self.client = client
         self.connection = connection
-        self.run()
+        self.start()
 
     def run(self):
         # TODO: Make MessageReceiver receive and handle payloads
