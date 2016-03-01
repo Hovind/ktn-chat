@@ -20,15 +20,14 @@ class MessageParser():
         else:
             return None
             # Response not valid
-			
 
     def parse_error(self, payload):
         pass
-		
+
     def parse_info(self, payload):
         pass
-	
-    # Include more methods for handling the different responses... 
+
+# Include more methods for handling the different responses...
 
     def parse_message(self, payload):
         pass

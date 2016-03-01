@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from threading import Thread
 
+
 class MessageReceiver(Thread):
+
     """
     This is the message receiver class. The class inherits Thread, something that
     is necessary to make the MessageReceiver start a new thread, and it allows
@@ -26,10 +28,6 @@ class MessageReceiver(Thread):
         while(True):
             response = self.connection.recv(1024)
             self.client.receive_message(response)
-			
-			
-		
-        
-		
+
     def receive(self):
         pass

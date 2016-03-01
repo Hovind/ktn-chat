@@ -4,7 +4,9 @@ from MessageReceiver import MessageReceiver
 from MessageParser import MessageParser
 import json
 
+
 class Client:
+
     """
     This is the chat client class
     """
@@ -31,10 +33,12 @@ class Client:
         while (True):
             input = raw_input('Skriv noe: ')
             input = input.split(' ', 1)
-            payload = {'request': input[0], 'content': input[1]}
-            send_payload(payload)
+            if input ==1:
 
-        
+                payload = {'request': input[0], 'content': input[1]}
+            else:
+                send_payload(payload)
+
     def disconnect(self):
         # TODO: Handle disconnection
         pass
@@ -45,8 +49,8 @@ class Client:
 
     def send_payload(self, data):
         # TODO: Handle sending of a payload
-		payload_string = json.dumps(data)
-		self.connection.send(payload_string)
+        payload_string = json.dumps(data)
+        self.connection.send(payload_string)
         
     # More methods may be needed!
 
