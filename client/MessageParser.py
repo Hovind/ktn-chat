@@ -1,6 +1,7 @@
+import json
 
 
-class MessageParser():
+class MessageParser:
     def __init__(self):
 
         self.possible_responses = {
@@ -22,7 +23,7 @@ class MessageParser():
             # Response not valid
 
     def parse_error(self, payload):
-        pass
+
 
     def parse_info(self, payload):
         pass

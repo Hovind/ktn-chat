@@ -35,11 +35,12 @@ class Client:
         while (True):
             input = raw_input('Skriv noe: ')
             input = input.split(' ', 1)
-            if input ==1:
+            if len(input) ==1:
 
-                payload = {'request': input[0], 'content': input[1]}
+                payload = {'request': input[0], 'content': None}
             else:
-                send_payload(payload)
+                payload = {'request': input[0], 'content': input[1]}
+            self.send_payload(payload)
 
     def disconnect(self):
         # TODO: Handle disconnection
@@ -54,7 +55,7 @@ class Client:
         payload_string = json.dumps(data)
         self.connection.send(payload_string)
         
-    # More methods may be needed!
+    # More methods may be needed
 
 
 if __name__ == '__main__':
