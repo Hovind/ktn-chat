@@ -19,19 +19,19 @@ class MessageParser:
         if payload['response'] in self.possible_responses:
             return self.possible_responses[payload['response']](payload)
         else:
-            return None
+            return payload['content']
             # Response not valid
 
     def parse_error(self, payload):
-        pass
+        return payload['content'];
 
     def parse_info(self, payload):
-        pass
+        return payload['content'];
 
 # Include more methods for handling the different responses...
 
     def parse_message(self, payload):
-        pass
+        return payload['timestamp'] + " " + payload['sender'] + ": " + payload['content']
             
     def parse_history(self, payload):
-        pass
+        return payload['content'];

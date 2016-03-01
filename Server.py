@@ -58,9 +58,9 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                     send('names','Error: Not a valid request.', self.connection)
             elif case == 'msg':
                 if self.connection in clients:
-                    broadcast('msg', recieved_dict['content'])
+                    broadcast('message', recieved_dict['content'])
                 else:
-                    send('msg','Error: Not a valid request.', self.connection)
+                    send('error','Error: Not a valid request.', self.connection)
             else:
                 send('error','Error: Not a valid request.', self.connection)
                 
