@@ -24,15 +24,15 @@ class Client:
         # Initiate the connection to the server
         self.connection.connect((self.host, self.server_port))
 
-		# TODO: Our stuff
-		receiver = MessageReceiver(self, self.connection)
-		
-		# Read input from user
-		while (True):
-			input = raw_input('Skriv noe: ')
-			input = input.split(' ', 1)
-			payload = {'request': input[0], 'content': input[1]}
-			send_payload(payload)
+        # TODO: Our stuff
+        receiver = MessageReceiver(self, self.connection)
+            
+        # Read input from user
+        while (True):
+            input = raw_input('Skriv noe: ')
+            input = input.split(' ', 1)
+            payload = {'request': input[0], 'content': input[1]}
+            send_payload(payload)
 
         
     def disconnect(self):
