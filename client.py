@@ -1,7 +1,7 @@
 from socket import *
-import cPickle as pickle
+#import cPickle as pickle
 from datetime import datetime
-
+import json
 
 class Messages:
 	username = ''
@@ -17,21 +17,23 @@ class Messages:
 
 		
 		
-client = Messages(raw_input('Your username: '));
+#client = Messages(raw_input('Your username: '));
 
-
+dict = {'request':'help','content':'None'}
 s = socket(AF_INET, SOCK_STREAM)
 PORT = 40000
 s.connect(('127.0.0.1', PORT))
 while(1):
-	client.message = raw_input('Your message: ')
-	client.set_timestamp()
+	message = raw_input('Your message: ')
+	#client.set_timestamp()
 	#pickle_out = open("message_object.pickle", "wb")
-	data_string = pickle.dumps(client, -1)
+	data_string = json.dumps(dict)
 	s.send(data_string)
 	#pickle_out.close()
 	print 'Awaiting reply'
-	reply = s.recv(1024)
-	print "Recieved: ", repr(reply)
+	reply = s.recv(4096)
+	#print reply
+	a = json.loads(reply)
+	print repr(a)
 	
 s.close()
