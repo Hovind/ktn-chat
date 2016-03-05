@@ -26,7 +26,7 @@ class MessageParser:
         return payload['content'];
 
     def parse_info(self, payload):
-        return payload['content'];
+        return payload['timestamp'] + " " + payload['content']
 
 # Include more methods for handling the different responses...
 
@@ -34,4 +34,4 @@ class MessageParser:
         return payload['timestamp'] + " " + payload['sender'] + ": " + payload['content']
             
     def parse_history(self, payload):
-        return payload['content'];
+        return "\n".join(map(lambda message: parse_message(self, message), payload)) 
