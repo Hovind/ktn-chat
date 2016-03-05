@@ -34,4 +34,4 @@ class MessageParser:
         return payload['timestamp'] + " " + payload['sender'] + ": " + payload['content']
             
     def parse_history(self, payload):
-        return "\n".join(map(lambda message: parse_message(self, message), payload)) 
+        return "\n".join(map(self.parse_message, payload['content'])) 

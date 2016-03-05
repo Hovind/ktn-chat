@@ -5,15 +5,27 @@ import json
 from datetime import datetime
 
 
-helpmessage = 'login <username> - log in with the given username \n logout - log out \n msg <message> - send message \n names - list users in chat \n help - view help text' 
+helpmessage = 'login <username> - log in with the given username \nlogout - log out \nmsg <message> - send message \nnames - list users in chat \nhelp - view help text' 
 
 clients = {}
+chatHistory = []
 
 """
 Variables and functions that must be used by all the ClientHandler objects
 must be written here (e.g. a dictionary for connected clients)
 """
 
+def checkValidLogin(username, list, socket):
+    if socket in list:
+        return False, 'Already logged in.'
+    elif username == None or not(username.isalnum()):
+        return False, 'Not a valid username, use only letters a-z and digits 0-9.'
+    elif username in list.values():
+        return False, 'Username taken.'
+    else:
+        return True, 'All good.'
+        
+            
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
     This is the ClientHandler class. Everytime a new client connects to the
@@ -29,8 +41,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
-        
-        
+        global chatHistory
+        global clients
 
         # Loop that listens for messages from the client
         while True:
@@ -38,44 +50,37 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             recieved_dict = json.loads(received_string)
             case = (recieved_dict['request']) 
             if case == 'login':
-                clients[self.connection] = recieved_dict['content']
-                broadcast('login', recieved_dict['content'] + " connected")
+                valid, error = checkValidLogin(recieved_dict['content'], clients, self.connection)
+                if valid:
+                    clients[self.connection] = recieved_dict['content']
+                    broadcast('login', recieved_dict['content'] + " connected", self.connection)
+                    send('history', chatHistory, self.connection)
+                else:
+                    send('login', error, self.connection)
             elif case == 'logout':
                 if self.connection in clients:
-                    broadcast('logout', recieved_dict['content'] + "disconnected")
+                    broadcast('logout', clients[self.connection] + " disconnected", self.connection)
                     clients.pop(self.connection, None)
                 else:
-                    send('logout','Error: Not a valid request.', self.connection)
+                    send('error','Error: Not a valid request.', self.connection)
             elif case == 'help':
                 send('help', helpmessage, self.connection)
             elif case == 'names':
                 if self.connection in clients:
                     message = "Connected users: "
-                    for key in clients:
-                        message += clients[key] + ", "
-                    send('names', 'message', self.connection)
+                    message += ", ".join(clients.values());
+                    send('info', message, self.connection)
                 else:
-                    send('names','Error: Not a valid request.', self.connection)
+                    send('error','Error: Not a valid request.', self.connection)
             elif case == 'msg':
                 if self.connection in clients:
-                    broadcast('message', recieved_dict['content'])
+                    broadcast('message', recieved_dict['content'], self.connection)
                 else:
                     send('error','Error: Not a valid request.', self.connection)
             else:
                 send('error','Error: Not a valid request.', self.connection)
                 
-                
-            
-        
-            
-            
-            
-            
-            # TODO: Add handling of received payload from client
-
-            
-            
-            
+                           
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     """
     This class is present so that each client connected will be ran as a own
@@ -85,10 +90,14 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     """
     allow_reuse_address = True
     
-def broadcast(response, content):
+def broadcast(response, content, selfconnection):
+    global chatHistory
+    dict = {'timestamp':datetime.now().strftime("%X"), 'sender':clients[selfconnection], 'response':response, 'content':content}
+    
+    message = json.dumps(dict)
+    if response == 'message':
+        chatHistory.append(dict)
     for socket in clients:
-        dict = {'timestamp':datetime.now().strftime("%X"), 'sender':clients[socket], 'response':response, 'content':content}
-        message = json.dumps(dict)
         try :
             socket.send(message)
         except :
@@ -98,7 +107,7 @@ def broadcast(response, content):
             if socket in clients:
                 clients.pop(socket, None)
 
-				
+                
 def send(response, content, socket):
     dict = {'timestamp':datetime.now().strftime("%X"), 'sender':None, 'response':response, 'content':content}
     message = json.dumps(dict)
@@ -111,6 +120,7 @@ def send(response, content, socket):
         #if socket in clients:
         #    clients.pop(socket, None)
 
+        
 if __name__ == "__main__":
     """
     This is the main method and is executed when you type "python Server.py"
